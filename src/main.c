@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
 
     printWelcome();
     buildCards(deck);
-    char hitStand;
+    char hitStand[10];
     char replay;
     
     startGame(deck, &gm);
@@ -33,10 +33,10 @@ int main(int argc, char* argv[]) {
         printTable(&gm);
         do {
             printf("Hit/Stand/Quit(h/s/q): ");
-            scanf(" %c", &hitStand);
+            scanf(" %s", hitStand);
             printf("\n");
             
-            if ((hitStand == 'h' || hitStand == 'H') && gm.stand == false) {
+            if ((strcmp(hitStand, "h") == 0|| strcmp(hitStand, "H") == 0) && gm.stand == false) {
                 gm.pHand[gm.phs] = drawCard(deck);
                 if(gm.pHand[gm.phs].val == 1) {
                     if((gm.pHand[gm.phs].val + gm.pSum + 10) <= 21) {
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
                 gm.pSum += gm.pHand[gm.phs].val;
                 gm.phs++;
                 break;
-            } else if((hitStand == 's' || hitStand == 'S') || gm.stand == true) {
+            } else if((strcmp(hitStand, "s") == 0 || strcmp(hitStand, "S") == 0) || gm.stand == true) {
                 gm.stand = true;
                 gm.dHand[gm.dhs] = drawCard(deck);
                 if(gm.dHand[gm.dhs].val == 1) {
@@ -59,8 +59,12 @@ int main(int argc, char* argv[]) {
                 gm.dSum += gm.dHand[gm.dhs].val;
                 gm.dhs++;
                 break;
-            } else if((hitStand == 'q' || hitStand == 'Q') || gm.stand == true) {
+            } else if((strcmp(hitStand, "q") == 0|| strcmp(hitStand, "Q") == 0) || gm.stand == true) {
+                printGoodbye(&gm);
                 return 0;
+            } else if(strcmp(hitStand, "help") == 0) {
+                printHelp();
+                continue;
             } else {
                 printf("Invalid input\n");
             }
@@ -105,6 +109,8 @@ int main(int argc, char* argv[]) {
                     restart(deck, &gm);
                     break;
                 } else if (replay == 'n' || replay == 'N') {
+                    gm.cash = gm.cash + gm.betCash;
+                    printGoodbye(&gm);
                     return 0;
                 } else {
                     printf("Invalid input\n");

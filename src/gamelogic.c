@@ -30,7 +30,7 @@ void startGame(card deck[52], gmState* gm) {
 void placeBet(gmState* gm) {
     do {
         printf("Your cash: %i\n", gm->cash);
-        printf("Your bet:");
+        printf("Your bet: ");
         scanf(" %i", &gm->betCash);
         printf("\n");
         if(gm->betCash <= gm->cash) {

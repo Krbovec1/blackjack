@@ -93,11 +93,17 @@ void printHand(card hand[], int handSize) {
 }
 
 void printHelp(){
+    printf("Rules: Try to get as close to 21 as possible without going over.\n");
+    printf("Aces can count as 1 or 11, face cards are worth 10.\n");
+    printf("You can hit (draw a card) or stand (keep your current hand).\n");
+    printf("You can no longer hit after standing.\n");
+    printf("\n");
     printf("Usage: blackjack -[option]\n");
     printf("Options: \n");
     printf("  -v/--values: Display hand values\n");
     printf("  -c/--cash: Play with bets\n");
     printf("  -h/--help: Display help\n");
+    printf("\n");
 }
 
 void printEnd(gmState *gm, int result) {
@@ -118,11 +124,7 @@ void printEnd(gmState *gm, int result) {
 
 void printWelcome() {
     printf("Welcome to Blackjack!\n");
-    printf("Rules: Try to get as close to 21 as possible without going over.\n");
-    printf("Aces can count as 1 or 11, face cards are worth 10.\n");
-    printf("You can hit (draw a card) or stand (keep your current hand).\n");
-    printf("You can no longer hit after standing.\n");
-    printf("For help use blackjack -h.\n");
+    printf("For usage/rules use (help).\n");
     printf("\n");
 }
 
