@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include <ctype.h>
 #include "blackjack.h"
 
 int main(int argc, char* argv[]) {
@@ -23,6 +24,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    void initColors();
     printWelcome();
     buildCards(deck);
     char hitStand[10];
@@ -32,11 +34,14 @@ int main(int argc, char* argv[]) {
     while(true) {
         printTable(&gm);
         do {
-            printf("Hit/Stand/Quit(h/s/q): ");
-            scanf(" %s", hitStand);
             printf("\n");
-            
-            if ((strcmp(hitStand, "h") == 0|| strcmp(hitStand, "H") == 0) && gm.stand == false) {
+            printf(">> ");
+            scanf(" %s", hitStand);
+            //printf("\n");
+            for(int i = 0; hitStand[i] != '\0'; i++) {
+                hitStand[i] = tolower(hitStand[i]);
+            }
+            if ((strcmp(hitStand, "h") == 0|| strcmp(hitStand, "hit") == 0) && gm.stand == false) {
                 gm.pHand[gm.phs] = drawCard(deck);
                 if(gm.pHand[gm.phs].val == 1) {
                     if((gm.pHand[gm.phs].val + gm.pSum + 10) <= 21) {
@@ -47,7 +52,7 @@ int main(int argc, char* argv[]) {
                 gm.pSum += gm.pHand[gm.phs].val;
                 gm.phs++;
                 break;
-            } else if((strcmp(hitStand, "s") == 0 || strcmp(hitStand, "S") == 0) || gm.stand == true) {
+            } else if((strcmp(hitStand, "s") == 0 || strcmp(hitStand, "stand") == 0) || gm.stand == true) {
                 gm.stand = true;
                 gm.dHand[gm.dhs] = drawCard(deck);
                 if(gm.dHand[gm.dhs].val == 1) {
@@ -59,12 +64,33 @@ int main(int argc, char* argv[]) {
                 gm.dSum += gm.dHand[gm.dhs].val;
                 gm.dhs++;
                 break;
-            } else if((strcmp(hitStand, "q") == 0|| strcmp(hitStand, "Q") == 0) || gm.stand == true) {
+            } else if((strcmp(hitStand, "q") == 0 || strcmp(hitStand, "quit") == 0) || gm.stand == true) {
                 printGoodbye(&gm);
                 return 0;
             } else if(strcmp(hitStand, "help") == 0) {
                 printHelp();
                 continue;
+            } else if(strcmp(hitStand, "value") == 0) {
+                if(values) {
+                    printf("Hand value displaying is now turned off\n");
+                    values = false;
+                    continue;
+                }else{
+                    printf("Each hand will now display its value\n");
+                    values = true;
+                    continue;
+                }
+            } else if(strcmp(hitStand, "cash") == 0) {
+                if(cash) {
+                    printf("Betting is turned off starting next game\n");
+                    cash = false;
+                    gm.cash = 100;
+                    continue;
+                }else{
+                    printf("Betting is turned on starting next game\n");
+                    cash = true;
+                    continue;
+                }
             } else {
                 printf("Invalid input\n");
             }

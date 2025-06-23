@@ -93,16 +93,18 @@ void printHand(card hand[], int handSize) {
 }
 
 void printHelp(){
+    printf("\n");
     printf("Rules: Try to get as close to 21 as possible without going over.\n");
     printf("Aces can count as 1 or 11, face cards are worth 10.\n");
     printf("You can hit (draw a card) or stand (keep your current hand).\n");
     printf("You can no longer hit after standing.\n");
     printf("\n");
-    printf("Usage: blackjack -[option]\n");
-    printf("Options: \n");
-    printf("  -v/--values: Display hand values\n");
-    printf("  -c/--cash: Play with bets\n");
-    printf("  -h/--help: Display help\n");
+    printf("  (h)/(hit): Hit\n");
+    printf("  (s)/(stand): Stand\n");
+    printf("  (q)/(quit): Quit game\n");
+    printf("  -v / (value): Display hand values\n");
+    printf("  -c / (cash): Play with bets\n");
+    printf("  -h / (help): Display help\n");
     printf("\n");
 }
 
@@ -124,7 +126,7 @@ void printEnd(gmState *gm, int result) {
 
 void printWelcome() {
     printf("Welcome to Blackjack!\n");
-    printf("For usage/rules use (help).\n");
+    printf("For usage/rules type (help).\n");
     printf("\n");
 }
 
@@ -134,4 +136,22 @@ void printGoodbye(gmState *gm) {
         printf("Your final cash balance: %d\n", gm->cash);
     }
     printf("Goodbye!\n");
+}
+
+#ifdef _WIN32
+#include <windows.h>
+
+void enableWindowsColors() {
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD dwMode = 0;
+    GetConsoleMode(hOut, &dwMode);
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(hOut, dwMode);
+}
+#endif
+
+void initColors() {
+#ifdef _WIN32
+    enableWindowsColors();
+#endif
 }
