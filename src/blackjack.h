@@ -15,8 +15,8 @@ typedef struct tgmState {
     int phs, dhs;
     int pSum, dSum;
     int pAces, dAces;
-    bool stand, end;
-    int cash, betCash;
+    bool stand, end, insured;
+    int cash, betCash, insuranceCash;
 } gmState;
 
 extern const char *ranks[];
@@ -42,6 +42,7 @@ extern bool usedCards[52];
 #define BRIGHT_MAGENTA "\033[95m"
 #define BRIGHT_CYAN    "\033[96m"
 #define BRIGHT_WHITE   "\033[97m"
+#define BRIGHT_ORANGE  "\033[38;5;214m"
 
 #define BG_BLACK   "\033[40m"
 #define BG_RED     "\033[41m"
@@ -55,6 +56,11 @@ extern bool usedCards[52];
 #define BOLD      "\033[1m"
 #define UNDERLINE "\033[4m"
 
+#define SPADES   BRIGHT_YELLOW
+#define HEARTS   BRIGHT_ORANGE
+#define DIAMONDS  BRIGHT_RED
+#define CLUBS     BRIGHT_MAGENTA
+
 void buildCards(card cards[52]);
 void printHand(card hand[], int handSize);
 void printTable(gmState *gm);
@@ -64,10 +70,13 @@ int getNewIndex();
 void restart(card deck[52], gmState *gm);
 void placeBet(gmState *gm);
 void printHelp();
-void printEnd(gmState *gm, int result);// result val - 0: push, 1: win, 2: lose
+void printEnd(gmState *gm, int result);// result val - 0 = push, 1 = win, 2 = lose
 void printWelcome();
 void printGoodbye(gmState *gm);
 void enableWindowsColors();
 void initColors();
+const char* getSuitColor(int suit);
+void gameEnd(gmState* gm, card deck[52]);
+void insurance(gmState* gm);
 
 #endif
