@@ -12,6 +12,7 @@ int main() {
     srand(time(NULL));
 
     initColors();
+    loadConfig();
     printWelcome();
     buildCards(deck);
     char input[10];
@@ -24,9 +25,7 @@ int main() {
             printf(">> ");
             scanf(" %s", input);
             //printf("\n");
-            for(int i = 0; input[i] != '\0'; i++) {
-                input[i] = tolower(input[i]);
-            }
+            lowerStr(input);
             if ((strcmp(input, "h") == 0|| strcmp(input, "hit") == 0) && gm.stand == false) {
                 gm.pHand[gm.phs] = drawCard(deck);
                 if(gm.pHand[gm.phs].val == 1) {
@@ -64,27 +63,11 @@ int main() {
             } else if(strcmp(input, "help") == 0 ) {
                 printHelp();
                 continue;
-            } else if(strcmp(input, "value") == 0 || strcmp(input, "v") == 0) {
-                if(values) {
-                    printf("Hand value displaying is now turned off\n");
-                    values = false;
-                    continue;
-                }else{
-                    printf("Each hand will now display its value\n");
-                    values = true;
-                    continue;
-                }
-            } else if(strcmp(input, "cash") == 0 || strcmp(input, "c") == 0) {
-                if(cash) {
-                    printf("Betting is turned off starting next game\n");
-                    cash = false;
-                    gm.cash = 100;
-                    continue;
-                }else{
-                    printf("Betting is turned on starting next game\n");
-                    cash = true;
-                    continue;
-                }
+            } else if(strcmp(input, "settings") == 0 || strcmp(input, "cfg") == 0) {
+                showSettingsMenu();
+                printf("\n");
+                printTable(&gm);
+                continue;
             } else {
                 printf("Invalid input\n");
             }

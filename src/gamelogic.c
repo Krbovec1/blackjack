@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "blackjack.h"
+#include "colors.h"
 
 void startGame(card deck[52], gmState* gm) {
     if(cash == true){
@@ -120,17 +121,20 @@ void insurance(gmState* gm) {
 
 void gameEnd(gmState* gm, card deck[52]) {
     char replay;
+    gm->cash = gm->cash + gm->betCash;
+    if(autoplay == true){
+        restart(deck, gm);
+        return;
+    }
     do {
         printf(BOLD "Play again? (y/n): " RESET);
         scanf(" %c", &replay);
         printf("\n");
         
         if (replay == 'y' || replay == 'Y') {
-            gm->cash = gm->cash + gm->betCash;
             restart(deck, gm);
             break;
         } else if (replay == 'n' || replay == 'N') {
-            gm->cash = gm->cash + gm->betCash;
             printGoodbye(gm);
             return;
         } else {
