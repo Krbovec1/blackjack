@@ -11,6 +11,23 @@ bool cash = false;
 bool autoplay = false;
 bool usedCards[52] = {false};
 
+int spadesColor = 0;
+int heartsColor = 0;
+int diamondsColor = 0;
+int clubsColor = 0;
+
+const char* colorTable[] = {
+    "",
+    RED,
+    GREEN,
+    YELLOW,
+    BLUE,
+    MAGENTA,
+    CYAN,
+    WHITE,
+    ORANGE
+};
+
 card drawCard(card deck[52]) {
     int cIndex = getNewIndex();
     return deck[cIndex];
@@ -48,10 +65,10 @@ void buildCards(card cards[52]) {
 
 const char* getSuitColor(int suit) {
     switch(suit) {
-        case 0: return SPADES;
-        case 1: return HEARTS;
-        case 2: return DIAMONDS;
-        case 3: return CLUBS;
+        case 0: return colorTable[spadesColor];
+        case 1: return colorTable[heartsColor];
+        case 2: return colorTable[diamondsColor];
+        case 3: return colorTable[clubsColor];
         default: return "";
     }
 }
@@ -156,6 +173,7 @@ void printGoodbye(gmState *gm) {
         printf("Your final cash balance: %d\n", gm->cash);
     }
     printf("Goodbye!\n");
+    exit(0);
 }
 
 #ifdef _WIN32
@@ -192,15 +210,16 @@ void loadConfig() {
 
     char line[128];
     while (fgets(line, sizeof(line), f)) {
-        char key[64], value[64];
-        if (sscanf(line, "%63[^=]=%63s", key, value) == 2) {
-            if (strcmp(key, "values") == 0) values = atoi(value);
-            else if (strcmp(key, "cash") == 0) cash = atoi(value);
-            else if (strcmp(key, "autoplay") == 0) autoplay = atoi(value);
-            else if (strcmp(key, "spades_color") == 0) SPADES = strdup(value);
-            else if (strcmp(key, "hearts_color") == 0) HEARTS = strdup(value);
-            else if (strcmp(key, "diamonds_color") == 0) DIAMONDS = strdup(value);
-            else if (strcmp(key, "clubs_color") == 0) CLUBS = strdup(value);
+        char key[64];
+        int value;
+        if (sscanf(line, "%63[^=]=%d", key, &value) == 2) {
+            if (strcmp(key, "values") == 0) values = value;
+            else if (strcmp(key, "cash") == 0) cash = value;
+            else if (strcmp(key, "autoplay") == 0) autoplay = value;
+            else if (strcmp(key, "spades_color") == 0) spadesColor= value;
+            else if (strcmp(key, "hearts_color") == 0) heartsColor = value;
+            else if (strcmp(key, "diamonds_color") == 0) diamondsColor = value;
+            else if (strcmp(key, "clubs_color") == 0) clubsColor = value;
         }
     }
     fclose(f);
@@ -212,10 +231,10 @@ void saveConfig() {
     fprintf(f, "values=%d\n", values ? 1 : 0);
     fprintf(f, "cash=%d\n", cash ? 1 : 0);
     fprintf(f, "autoplay=%d\n", autoplay ? 1 : 0);
-    fprintf(f, "spades_color=%s\n", SPADES);
-    fprintf(f, "hearts_color=%s\n", HEARTS);
-    fprintf(f, "diamonds_color=%s\n", DIAMONDS);
-    fprintf(f, "clubs_color=%s\n", CLUBS);
+    fprintf(f, "spades_color=%d\n", spadesColor);
+    fprintf(f, "hearts_color=%d\n", heartsColor);
+    fprintf(f, "diamonds_color=%d\n", diamondsColor);
+    fprintf(f, "clubs_color=%d\n", clubsColor);
     fclose(f);
 }
 
@@ -257,7 +276,7 @@ void showSettingsMenu() {
                 changeColor(color, 0);
                 break;
             case 5:
-                printf("Hearst color: ");
+                printf("Hearts color: ");
                 scanf("%s", color);
                 changeColor(color, 1);
                 break;
@@ -279,46 +298,31 @@ void showSettingsMenu() {
     }
 }
 
-void changeColor(char* color, int suit){
-    lowerStr(color);
-    const char* ansiVal = getColorAnsi(color);
-    if (!ansiVal) {
-        printf("Unknown color name.\n");
+void changeColor(char* color, int suit) {
+    int colorIndex = getColorIndex(color);
+    if (colorIndex == -1) {
+        printf("Unknown color.\n");
         return;
     }
-    char* newColor = strdup(ansiVal);;
-    switch(suit){
-        case 0:
-            if (SPADES) free(SPADES);
-            SPADES = newColor;
-            break;
-        case 1:
-            if (HEARTS) free(HEARTS);
-            HEARTS = newColor;
-            break;
-        case 2:
-            if (DIAMONDS) free(DIAMONDS);
-            DIAMONDS = newColor;
-            break;
-        case 3:
-            if (CLUBS) free(CLUBS);
-            CLUBS = newColor;
-            break;
-        default:
-            perror("Suit not specified in changeColor");
-            free(newColor);
+    
+    switch(suit) {
+        case 0: spadesColor = colorIndex; break;
+        case 1: heartsColor = colorIndex; break;
+        case 2: diamondsColor = colorIndex; break;
+        case 3: clubsColor = colorIndex; break;
+        default: printf("Invalid suit\n");
     }
 }
 
-const char* getColorAnsi(const char* name) {
-    if (strcasecmp(name, "black") == 0) return BLACK;
-    if (strcasecmp(name, "red") == 0) return RED;
-    if (strcasecmp(name, "green") == 0) return GREEN;
-    if (strcasecmp(name, "yellow") == 0) return YELLOW;
-    if (strcasecmp(name, "blue") == 0) return BLUE;
-    if (strcasecmp(name, "magenta") == 0) return MAGENTA;
-    if (strcasecmp(name, "cyan") == 0) return CYAN;
-    if (strcasecmp(name, "white") == 0) return WHITE;
-    if (strcasecmp(name, "orange") == 0) return ORANGE;
-    return NULL;
+int getColorIndex(const char* name) {
+    lowerStr((char*)name);
+    if (strcmp(name, "white") == 0) return 0;
+    if (strcmp(name, "red") == 0) return 1;
+    if (strcmp(name, "green") == 0) return 2;
+    if (strcmp(name, "yellow") == 0) return 3;
+    if (strcmp(name, "blue") == 0) return 4;
+    if (strcmp(name, "magenta") == 0) return 5;
+    if (strcmp(name, "cyan") == 0) return 6;
+    if (strcmp(name, "orange") == 0) return 7;
+    return -1;
 }

@@ -53,7 +53,11 @@ void loadConfig();
 void saveConfig();
 void lowerStr(char* str);
 void showSettingsMenu();
-const char* getColorAnsi(const char* name);
+int getColorIndex(const char* name);
 void changeColor(char* color, int suit);
+char* strdupe(const char* str);
+bool convertAce(gmState* gm, bool isPlayer);
+void addCardToHand(gmState* gm, card newCard, bool isPlayer);
+void debugPrint(gmState *gm);
 
 #endif

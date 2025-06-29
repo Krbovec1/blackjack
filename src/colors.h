@@ -34,9 +34,4 @@
 #define BOLD      "\033[1m"
 #define UNDERLINE "\033[4m"
 
-extern char* SPADES;
-extern char* HEARTS;
-extern char* DIAMONDS;
-extern char* CLUBS;
-
 #endif

@@ -36,28 +36,38 @@ void startGame(card deck[52], gmState* gm) {
         gm->dSum += gm->dHand[gm->dhs].val;
     }
     gm->dhs++;
-    if(gm->pHand->val == 21){
+    if(gm->pSum == 21){
         printf(BOLD GREEN "Blackjack!\n" RESET);
         printEnd(gm, 1);
         gameEnd(gm, deck);
         return;
     }
-    if(gm->dAces == 1){
+    if(gm->dAces == 1 && cash == true) {
         insurance(gm);
     }
 }
 
 void placeBet(gmState* gm) {
+    int bet;
     do {
         printf("Your cash: %i\n", gm->cash);
         printf("Your bet: ");
-        scanf(" %i", &gm->betCash);
-        printf("\n");
-        if(gm->betCash <= gm->cash) {
+        
+        if (scanf("%i", &bet) != 1) {
+            printf("Invalid input.\n");
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF);
+            continue;
+        }
+        
+        if (bet <= gm->cash) {
+            gm->betCash = bet;
             break;
         }
+        
         printf("Not enough cash\n");
     } while(1);
+    
     gm->cash -= gm->betCash;
 }
 
@@ -141,4 +151,49 @@ void gameEnd(gmState* gm, card deck[52]) {
             printf("Invalid input\n");
         }
     } while (1);
+}
+
+void addCardToHand(gmState* gm, card newCard, bool isPlayer) {
+    if (isPlayer) {
+        gm->pHand[gm->phs] = newCard;
+        
+        if (newCard.val == 1) {
+            if ((gm->pSum + 11) <= 21) {
+                gm->pSum += 11;
+                gm->pAces++;
+            } else {
+                gm->pSum += 1;
+            }
+        } else {
+            gm->pSum += newCard.val;
+        }
+        gm->phs++;
+    } else {  // Dealer
+        gm->dHand[gm->dhs] = newCard;
+        
+        if (newCard.val == 1) {
+            if ((gm->dSum + 11) <= 21) {
+                gm->dSum += 11;
+                gm->dAces++;
+            } else {
+                gm->dSum += 1;
+            }
+        } else {
+            gm->dSum += newCard.val;
+        }
+        gm->dhs++;
+    }
+}
+
+bool convertAce(gmState* gm, bool isPlayer) {
+    if (isPlayer && gm->pSum > 21 && gm->pAces > 0) {
+        gm->pSum -= 10;
+        gm->pAces--;
+        return true;
+    } else if (!isPlayer && gm->dSum > 21 && gm->dAces > 0) {
+        gm->dSum -= 10;
+        gm->dAces--;
+        return true;
+    }
+    return false;
 }
