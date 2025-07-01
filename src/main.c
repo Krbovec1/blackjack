@@ -4,13 +4,13 @@
 #include <time.h>
 #include <ctype.h>
 #include "blackjack.h"
-
+//cus
 int main() {
     gmState gm = {0};
     card deck[52];
     gm.cash = 100;
     srand(time(NULL));
-
+    int g = 5;
     initColors();
     loadConfig();
     printWelcome();
